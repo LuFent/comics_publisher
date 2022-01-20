@@ -7,20 +7,20 @@ from random import randrange
 from time import sleep
 
 
-def download_pic(dir, url):
+def download_pic(file_path, url):
     response = requests.get(url)
     response.raise_for_status()
 
-    with open(dir, 'wb') as file:
+    with open(file_path, 'wb') as file:
         file.write(response.content)
 
 
-def download_comics(comics_number, dir):
+def download_comics(comics_number, file_path):
     main_url = f"https://xkcd.com/{comics_number}/info.0.json"
     comics_data = requests.get(main_url).json()
     img_url = comics_data["img"]
     description = comics_data["alt"]
-    download_pic(dir, img_url)
+    download_pic(file_path, img_url)
     return description
 
 
@@ -92,12 +92,12 @@ def main():
         comics_num = randrange(last_comics_num)
 
         file_name = str(comics_num) + ".png"
-        dir = os.path.join(folder, file_name)
+        file_path = os.path.join(folder, file_name)
 
-        description = download_comics(comics_num, dir)
-        publish_photo(token, int(group_id), api_v, dir, description)
+        description = download_comics(comics_num, file_path)
+        publish_photo(token, int(group_id), api_v, file_path, description)
 
-        os.remove(dir)
+        os.remove(file_path)
 
         sleep(delay)
 
